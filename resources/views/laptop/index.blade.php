@@ -13,7 +13,7 @@
     <div class="list-laptop">
         @forelse($laptops as $item)
         <div class="laptop">
-            <a href="#">
+            <a href="{{ url('/chi-tiet/'.$item->id) }}" style="text-decoration: none; color: inherit;">
                 <img src="{{ asset('storage/image/'.$item->hinh_anh) }}" alt="{{ $item->tieu_de ?? $item->ten_san_pham }}" style="width:100%; height:auto;">
 
                 <div class="p-2 d-flex flex-column" style="min-height: 140px;">
