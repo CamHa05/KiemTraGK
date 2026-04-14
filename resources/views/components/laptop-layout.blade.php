@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{$title}}</title>
+    <title>{{ $title }}</title>
     <link rel="stylesheet" href="{{asset('library/bootstrap.min.css')}}">
 
     <script src="{{asset('library/jquery.slim.min.js')}}"></script>
@@ -130,9 +130,9 @@
                     <div class='col-6 p-0'>
                         <ul class="navbar-nav">
                             @foreach($categories as $category)
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{url('laptop/theloai/'.$category->id)}}">{{$category->ten_danh_muc}}</a>
-                            </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ route('laptop.category', $category->id) }}">{{ $category->ten_danh_muc }}</a>
+                                </li>
                             @endforeach
                         </ul>
                     </div>
@@ -162,9 +162,9 @@
                         <div class="dropdown">
                             <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">
                                 {{ Auth::user()->name }}
-                            </button>
-                            <div class="dropdown-menu">
-                                <a class="dropdown-item" href="">Quản lý</a>
+                                </button>
+                                <div class="dropdown-menu">
+                                <a class="dropdown-item" href="{{ route('laptop.manage') }}">Quản lý</a>
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf
                                     <a class="dropdown-item" onclick="event.preventDefault();
