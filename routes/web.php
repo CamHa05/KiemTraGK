@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [LaptopController1::class, 'index'])->name('laptop.index');
 Route::get('/laptop/theloai/{id}', [LaptopController1::class, 'category'])->name('laptop.category');
-
+Route::post('/timkiem', [LaptopController1::class, 'search'])->name('laptop.search');
 
 Route::get('/dashboard', function () {
     return view('dashboard');

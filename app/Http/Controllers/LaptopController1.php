@@ -42,4 +42,16 @@ class LaptopController1 extends Controller
 
         return view('laptop.index', compact('laptops', 'title'));
     }
+    // Hàm hiển thị khi click vào nút Tìm kiếm (Lấy tất cả laptop có tên chứa từ khóa)
+    public function search(Request $request)
+    {
+        $keyword = $request->input('keyword');
+        $categories = DB::table('danh_muc_laptop')->get();
+        $laptops = DB::table('san_pham')
+            ->where('tieu_de', 'like', '%' . $keyword . '%')
+            ->get();
+
+        $title = "Kết quả tìm kiếm cho: " . $keyword;
+        return view('laptop.index', compact('laptops', 'categories', 'title', 'keyword'));
+    }
 }
