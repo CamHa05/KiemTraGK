@@ -4,21 +4,40 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class LaptopController1 extends Controller
 {
-    private function buildQuery(Request $request, ?int $categoryId = null)
+    private function activeProductsQuery()
     {
         $query = DB::table('san_pham');
+
+        if (Schema::hasColumn('san_pham', 'status')) {
+            $query->where('status', 1);
+        }
+
+        return $query;
+    }
+
+    private function getPriceColumn(): string
+    {
+        return Schema::hasColumn('san_pham', 'gia_ban') ? 'gia_ban' : 'gia';
+    }
+
+    private function buildQuery(Request $request, ?int $categoryId = null)
+    {
+        $query = $this->activeProductsQuery();
 
         if ($categoryId !== null) {
             $query->where('id_danh_muc', $categoryId);
         }
 
+        $priceColumn = $this->getPriceColumn();
+
         if ($request->sort === 'asc') {
-            $query->orderBy('gia', 'asc');
+            $query->orderBy($priceColumn, 'asc');
         } elseif ($request->sort === 'desc') {
-            $query->orderBy('gia', 'desc');
+            $query->orderBy($priceColumn, 'desc');
         }
 
         return $query;
@@ -46,12 +65,30 @@ class LaptopController1 extends Controller
     public function search(Request $request)
     {
         $keyword = $request->input('keyword');
-        $categories = DB::table('danh_muc_laptop')->get();
-        $laptops = DB::table('san_pham')
+        $laptops = $this->activeProductsQuery()
             ->where('tieu_de', 'like', '%' . $keyword . '%')
             ->get();
 
         $title = "Kết quả tìm kiếm cho: " . $keyword;
-        return view('laptop.index', compact('laptops', 'categories', 'title', 'keyword'));
+        return view('laptop.index', compact('laptops', 'title', 'keyword'));
+    }
+
+    // Hàm hiển thị các cuốn sách trong trang quản lý sách
+    public function manage()
+    {
+        $laptops = $this->activeProductsQuery()->get();
+        return view('laptop.manage', compact('laptops'));
+    }
+
+    // Hàm xóa sách (cập nhật trường status về 0)
+    public function destroy($id)
+    {
+        if (!Schema::hasColumn('san_pham', 'status')) {
+            return redirect()->route('laptop.manage')->with('error', 'Chưa có cột status trong bảng san_pham.');
+        }
+
+        DB::table('san_pham')->where('id', $id)->update(['status' => 0]);
+
+        return redirect()->route('laptop.manage')->with('success', 'Đã xóa sản phẩm thành công');
     }
 }
